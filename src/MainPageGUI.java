@@ -10,7 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.Flow;
-
+import java.util.List;
 
 
 
@@ -54,13 +54,32 @@ public class MainPageGUI extends JFrame {
 
 
 
-        JButton practiceButton = new JButton("Testing layout");
+        JButton practiceButton = new JButton("Checkout Book");
         practiceButton.setBackground(Color.CYAN);
+        practiceButton.setFocusable(false);
         
+        JButton returnBook = new JButton("Return Book");
+        returnBook.setBackground(Color.CYAN);
+        returnBook.setFocusable(false);
+
+        JButton addBook = new JButton("Add Book");
+        addBook.setBackground(Color.CYAN);
+        addBook.setFocusable(false);
+
+
+        JButton signOut = new JButton("SignOut");
+        signOut.setBackground(Color.CYAN);
+        signOut.setFocusable(false);
+
+
+
 
         buttonPanel.add(practiceButton);
+        buttonPanel.add(returnBook);
+        buttonPanel.add(addBook);
+        buttonPanel.add(signOut);
         
-
+        
 
 
 
@@ -71,10 +90,11 @@ public class MainPageGUI extends JFrame {
         JTextArea availableBooksArea = new JTextArea();
         availableBooksArea = new JTextArea();
         availableBooksArea.setText("Available Books:\n");
+        availableBooksArea.setEditable(false);
 
 
         booksScrollPane = new JScrollPane(availableBooksArea);
-        booksScrollPane.setVisible(false);
+        booksScrollPane.setVisible(true);
         availableBooks.add(booksScrollPane, BorderLayout.CENTER);
 
         frame.add(availableBooks, BorderLayout.EAST);
@@ -100,16 +120,6 @@ public class MainPageGUI extends JFrame {
         //frame.add(checkoutButton);
 
 
-        
-
-
-
-
-
-
-
-
-
 
         frame.setVisible(true);
 
@@ -118,17 +128,10 @@ public class MainPageGUI extends JFrame {
     }
 
 
-    // private void checkingoutBook() 
-    // {
-       
-
-
-    // }
-
-    
-    // public void showBooks(List<Book> books){
-
-    // }
+    public void showBooks(List<Book> books)
+    {
+        
+    }
 
     
     
