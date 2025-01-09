@@ -1,0 +1,2 @@
+cedric1,password2,true
+tester1,tester1spassword,false
