@@ -6,12 +6,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.border.Border;
+//import javax.swing.border.Border;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.concurrent.Flow;
+//import java.util.concurrent.Flow;
 
 import java.util.List;
 
@@ -188,9 +188,19 @@ public class MainPageGUI extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                addNewBook();
-                                
-                            }
+
+                if(library.getSignedinUser() != null && library.getSignedinUser().isAdmin())
+                {
+                    addBookPanel.setVisible(true);
+                    addNewBook();
+                }
+                else
+                {
+                     addBook.setEnabled(false);
+                }
+                
+
+            }
                 
 
             
@@ -216,11 +226,6 @@ public class MainPageGUI extends JFrame {
 
 
 
-
-
-
-
-
         frame.setVisible(true);
 
 
@@ -239,7 +244,66 @@ public class MainPageGUI extends JFrame {
 
 
     private void addNewBook() {
-        
+        createBookButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String title = titleField.getText().trim();
+                String author = authorField.getText().trim();
+                String isbn = isbnField.getText().trim();
+                String genre = genreField.getText().trim();
+                String description = descField.getText().trim();
+
+
+
+
+
+
+                if(title.isEmpty() || author.isEmpty() || isbn.isEmpty() || genre.isEmpty() || description.isEmpty())
+                {
+                    JOptionPane.showMessageDialog(frame, "All fields must have text");
+                    return;
+                }
+
+                try {
+                    // Create a new Book object
+                    Book newBook = new Book(title, author, isbn, genre, description);
+    
+                    // Add the book to the library
+                    library.addBook(newBook);
+    
+                    // Update the book display
+                    showBooks(library.getBooks());
+    
+                    // Clear the input fields
+                    titleField.setText("");
+                    authorField.setText("");
+                    isbnField.setText("");
+                    genreField.setText("");
+                    descField.setText("");
+    
+                    // Hide the add book panel
+                    addBookPanel.setVisible(false);
+    
+                    // Notify the user
+                    JOptionPane.showMessageDialog(frame, "Book added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(frame, "Failed to add the book: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
+
+
+
+
+
+
+
+
+
+
+            }
+            
+        });
     }
     
     

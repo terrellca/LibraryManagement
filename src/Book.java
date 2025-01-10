@@ -12,7 +12,7 @@ public class Book
 
 
 
-    public Book(String title, String author, String genre, String isbn, String description, int numcopies)
+    public Book(String title, String author, String genre, String isbn, String description)
     {
         this.title = title;
         this.author = author;

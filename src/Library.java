@@ -79,7 +79,6 @@ public class Library {
         try(BufferedReader reader = new BufferedReader(new FileReader(BOOK_FILE)))
         {
             String line;
-            //Scanner inFile = new Scanner(USER_FILE);
             while((line = reader.readLine()) != null)
             {
                 String[] parts = line.split(",");
@@ -93,8 +92,13 @@ public class Library {
                     int copies = Integer.parseInt(parts[5].trim())               ;
                     
                     
-                    books.add(new Book(title, author, genre, description, isbn, copies));
-                    
+                    //books.add(new Book(title, author, genre, description, isbn));
+                    Book book = new Book(title, author, genre, description, isbn);
+                    for(int i = 0; i < copies; i++)
+                    {
+                        book.addCopy();
+                    }
+                    books.add(book);
                     
                 }
             }
@@ -161,7 +165,7 @@ public class Library {
             writer.write(String.format("%s,%s,%s,%s,%s,%d\n", book.getTitle(), book.getAuthor(), book.getIsbn(), book.getDescription(), book.getGenre(), book.getNumCopies()));
         } catch (IOException e)
         {
-            System.out.println("Error saving user to File" + e.getMessage());
+            System.out.println("Error saving book to File" + e.getMessage());
         }
     }
 
