@@ -122,6 +122,11 @@ public class Library {
         return users; 
     }
 
+    public List<Book> getBooks() 
+    {
+        return books; 
+    }
+
     public boolean isUsernameUsed(String username)
     {
         for(User user : users)

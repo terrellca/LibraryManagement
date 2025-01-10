@@ -28,6 +28,9 @@ public class MainPageGUI extends JFrame {
         this.library = library;
         this.currentUser = currentUser;
         initialize();
+
+        List<Book> books = library.getBooks(); // Or however you retrieve the books
+        showBooks(books);
     }
     
     private void initialize()
@@ -35,8 +38,6 @@ public class MainPageGUI extends JFrame {
         frame = new JFrame("Main Page");
         frame.setSize(300,300);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        //frame.setLayout(new FlowLayout());
 
         mainpanel = new JPanel(new FlowLayout());
 
@@ -56,9 +57,9 @@ public class MainPageGUI extends JFrame {
 
 
 
-        JButton practiceButton = new JButton("Checkout Book");
-        practiceButton.setBackground(Color.CYAN);
-        practiceButton.setFocusable(false);
+        JButton checkOut = new JButton("Checkout Book");
+        checkOut.setBackground(Color.CYAN);
+        checkOut.setFocusable(false);
         
         JButton returnBook = new JButton("Return Book");
         returnBook.setBackground(Color.CYAN);
@@ -76,7 +77,7 @@ public class MainPageGUI extends JFrame {
 
 
 
-        buttonPanel.add(practiceButton);
+        buttonPanel.add(checkOut);
         buttonPanel.add(returnBook);
         buttonPanel.add(addBook);
         buttonPanel.add(signOut);
@@ -89,7 +90,7 @@ public class MainPageGUI extends JFrame {
         JPanel availableBooks = new JPanel();
         availableBooks.setLayout(new BorderLayout());
 
-        JTextArea availableBooksArea = new JTextArea();
+        availableBooksArea = new JTextArea();
         availableBooksArea = new JTextArea();
         availableBooksArea.setText("Available Books:\n");
         availableBooksArea.setEditable(false);
@@ -107,7 +108,7 @@ public class MainPageGUI extends JFrame {
          * 
          * 
          *         JButton checkoutButton = new JButton("Checkout Books");
-        checkoutButton.addActionListener(new ActionListener() {
+        .addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
