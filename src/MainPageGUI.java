@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.Flow;
+
 import java.util.List;
 
 
@@ -21,9 +22,10 @@ public class MainPageGUI extends JFrame {
     private User currentUser;
     private JPanel mainpanel;
     private JScrollPane booksScrollPane;
+    private JTextArea availableBooksArea;
     
     public MainPageGUI(Library library, User currentUser) {
-        this.library = new Library();
+        this.library = library;
         this.currentUser = currentUser;
         initialize();
     }
@@ -130,7 +132,11 @@ public class MainPageGUI extends JFrame {
 
     public void showBooks(List<Book> books)
     {
-        
+        availableBooksArea.setText("Available books:\n\n");
+        for(Book book : books)
+        {
+            availableBooksArea.append(book.getTitle() + "\n");
+        }
     }
 
     

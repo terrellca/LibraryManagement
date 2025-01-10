@@ -19,6 +19,7 @@ public class Library {
     private User signedInUser; //the current user
     private List<User> users; //All users
     private static final File USER_FILE = new File("users.txt");
+    private static final File BOOK_FILE = new File("books.txt");
     //private static final ArrayList<String> USERNAMES = new ArrayList<>();
     //private static final ArrayList<String> PASSWORDS = new ArrayList<>();
 
@@ -28,6 +29,7 @@ public class Library {
         this.books = new ArrayList<>();
         this.users = new ArrayList<>();
         initializeUsers();
+        initializeBooks();
     }
     private void initializeUsers(){
         
@@ -72,6 +74,44 @@ public class Library {
     }
     
 
+    private void initializeBooks()
+    {
+        try(BufferedReader reader = new BufferedReader(new FileReader(BOOK_FILE)))
+        {
+            String line;
+            //Scanner inFile = new Scanner(USER_FILE);
+            while((line = reader.readLine()) != null)
+            {
+                String[] parts = line.split(",");
+                if(parts.length == 6)
+                {
+                    String title = parts[0].trim();
+                    String author = parts[1].trim();
+                    String genre = parts[1].trim();
+                    String description = parts[1].trim();
+                    String isbn = parts[1].trim();
+                    int copies = Integer.parseInt(parts[5].trim())               ;
+                    
+                    
+                    books.add(new Book(title, author, genre, description, isbn, copies));
+                    
+                    
+                }
+            }
+            System.out.println("Books after initialization:");
+            for (Book book : books) {
+            System.out.println(book.getTitle());
+            }
+        }
+        catch (IOException e)
+        {
+            System.out.println("An error occured. No books could be found.");
+        }
+    }
+
+
+
+
     public User getSignedinUser()
     {
         return signedInUser;
@@ -109,6 +149,17 @@ public class Library {
         }
     }
 
+    public void appendBookToFile(Book book)
+    {
+        try(FileWriter writer = new FileWriter("books.txt", true))
+        {
+            writer.write(String.format("%s,%s,%s,%s,%s,%d\n", book.getTitle(), book.getAuthor(), book.getIsbn(), book.getDescription(), book.getGenre(), book.getNumCopies()));
+        } catch (IOException e)
+        {
+            System.out.println("Error saving user to File" + e.getMessage());
+        }
+    }
+
 
     public void addUser(User user)
     {
@@ -130,17 +181,21 @@ public class Library {
 
     public void addBook(Book book)
     {
-        if(signedInUser.isAdmin())
+        if(signedInUser.isAdmin() && signedInUser != null)
         {
             for(Book b : books)
             {
                 if(b.getIsbn().equals(book.getIsbn()))
                 {
-                    book.addCopy();
+                    System.out.println("Another copy of " + b.getTitle() + " has been added");
+                    b.addCopy();
+                    return;
                 }
             }
         }
         books.add(book);
+        appendBookToFile(book);
+        System.out.println("New Book added.");
     }
 
 

@@ -6,20 +6,21 @@ public class Book
     private String description;
     private String genre;
     private int numcopies;
-    private int availablecopies;
+    //private int availablecopies;
 
 
 
 
 
-    public Book(String title, String author, String genre, String isbn)
+    public Book(String title, String author, String genre, String isbn, String description, int numcopies)
     {
         this.title = title;
         this.author = author;
         this.genre = genre;
         this.isbn = isbn;
+        this.description = description;
         this.numcopies = 1;
-        this.availablecopies = 1;
+        //this.availablecopies = 1;
         
     }
 
@@ -51,7 +52,7 @@ public class Book
 
     public boolean isAvailable()
     {
-        return availablecopies > 0;
+        return numcopies > 0;
     }
 
     public int getNumCopies()
@@ -59,10 +60,10 @@ public class Book
         return numcopies;
     } 
 
-    public int getAvailableCopies()
-    {
-        return availablecopies;
-    }
+    // public int getAvailableCopies()
+    // {
+    //     return availablecopies;
+    // }
 
     
     public void setTitle(String title)
@@ -94,24 +95,21 @@ public class Book
 
     public void BorrowCopy()
     {
-        if(availablecopies > 0)
+        if(numcopies > 0)
         {
-            availablecopies--;
+            numcopies--;
         }
     }
 
 
     public void ReturnCopy()
     {
-        if(availablecopies < numcopies)
-        {
-            availablecopies++;
-        }
+        numcopies++;
     }
 
     public void addCopy() {
-        numcopies++;
-        availablecopies++; // Increment available copies as well
+        numcopies++;  // Increment available copies as well
+        //availablecopies++;
     }
 
 

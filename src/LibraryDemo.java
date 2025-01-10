@@ -9,7 +9,7 @@ import java.io.IOException;
 
 
 public class LibraryDemo {
-    private static final File USER_FILE = new File("users.txt");
+    //private static final File USER_FILE = new File("users.txt");
     //private static final ArrayList<String> USERNAMES = new ArrayList<>();
     //private static final ArrayList<String> PASSWORDS = new ArrayList<>();
 
