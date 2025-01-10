@@ -6,6 +6,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.border.Border;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,36 +22,85 @@ public class MainPageGUI extends JFrame {
     private Library library;
     private JFrame frame;
     private User currentUser;
-    private JPanel mainpanel;
+    private JPanel mainpanel, buttonPanel, addBookPanel, availableBooks, headerPanel;
     private JScrollPane booksScrollPane;
     private JTextArea availableBooksArea;
+    private JTextField authorField, titleField, isbnField, genreField, descField;
+    private JButton checkOut, returnBook, addBook, signOut, createBookButton;
+        
+        public MainPageGUI(Library library, User currentUser) {
+            this.library = library;
+            this.currentUser = currentUser;
+            initialize();
     
-    public MainPageGUI(Library library, User currentUser) {
-        this.library = library;
-        this.currentUser = currentUser;
-        initialize();
-
-        List<Book> books = library.getBooks(); // Or however you retrieve the books
-        showBooks(books);
-    }
+            List<Book> books = library.getBooks(); // Or however you retrieve the books
+            showBooks(books);
+        }
+        
+        private void initialize()
+        {
+            frame = new JFrame("Main Page");
+            frame.setSize(600,400);
+            frame.setResizable(false);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     
-    private void initialize()
-    {
-        frame = new JFrame("Main Page");
-        frame.setSize(300,300);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            mainpanel = new JPanel();
+            mainpanel.setLayout(new BorderLayout());
 
-        mainpanel = new JPanel(new FlowLayout());
+            //Goes at the top.
+            headerPanel = new JPanel();
+
+            JLabel welcomeLabel = new JLabel("Welcome " + currentUser.getUsername());
+            headerPanel.add(welcomeLabel);
+
+            mainpanel.add(headerPanel, BorderLayout.NORTH);
+
+    
+            //Add Book Panel
+            addBookPanel = new JPanel();
+            addBookPanel.setLayout(new GridLayout(7,1));
+            
+            addBookPanel.add(new JLabel("Title"));
+            titleField = new JTextField();
+            titleField.setPreferredSize(new Dimension(30, 30));
+            addBookPanel.add(titleField);
+
+            addBookPanel.add(new JLabel("Author"));
+            authorField = new JTextField();
+            addBookPanel.add(authorField);
+
+            addBookPanel.add(new JLabel("Isbn"));
+            isbnField = new JTextField();
+            addBookPanel.add(isbnField);
+
+            addBookPanel.add(new JLabel("Description"));
+            descField = new JTextField();
+            addBookPanel.add(descField);
+
+
+            addBookPanel.add(new JLabel("Genre"));
+            genreField = new JTextField();
+            addBookPanel.add(genreField);
+
+            createBookButton = new JButton("Add Book");
+            addBookPanel.add(createBookButton, BorderLayout.SOUTH);
+            addBookPanel.setVisible(false);
+
+
+
+            mainpanel.add(addBookPanel, BorderLayout.CENTER);
+
+
 
         frame.add(mainpanel);
 
 
 
-        JLabel welcomeLabel = new JLabel("Welcome " + currentUser.getUsername());
-        mainpanel.add(welcomeLabel);
+      
+
 
         //Holds Checkout button/Return Button/Signout/ and Add Book
-        JPanel buttonPanel = new JPanel();
+        buttonPanel = new JPanel();
         buttonPanel.setBounds(250,250,250,250);
         buttonPanel.setBackground(Color.BLACK);
         buttonPanel.setLayout(new GridLayout(4,1));
@@ -57,20 +108,20 @@ public class MainPageGUI extends JFrame {
 
 
 
-        JButton checkOut = new JButton("Checkout Book");
+        checkOut = new JButton("Checkout Book");
         checkOut.setBackground(Color.CYAN);
         checkOut.setFocusable(false);
         
-        JButton returnBook = new JButton("Return Book");
+        returnBook = new JButton("Return Book");
         returnBook.setBackground(Color.CYAN);
         returnBook.setFocusable(false);
 
-        JButton addBook = new JButton("Add Book");
+        addBook = new JButton("Add Book");
         addBook.setBackground(Color.CYAN);
         addBook.setFocusable(false);
 
 
-        JButton signOut = new JButton("SignOut");
+        signOut = new JButton("SignOut");
         signOut.setBackground(Color.CYAN);
         signOut.setFocusable(false);
 
@@ -87,7 +138,7 @@ public class MainPageGUI extends JFrame {
 
 
         //Shows up on the side.
-        JPanel availableBooks = new JPanel();
+        availableBooks = new JPanel();
         availableBooks.setLayout(new BorderLayout());
 
         availableBooksArea = new JTextArea();
@@ -104,23 +155,69 @@ public class MainPageGUI extends JFrame {
         
 
 
-        /*
-         * 
-         * 
-         *         JButton checkoutButton = new JButton("Checkout Books");
-        .addActionListener(new ActionListener() {
+
+
+
+
+        //Dealing with button actions
+
+        checkOut.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-               checkingoutBook();
+                // TODO Auto-generated method stub
+                throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
             }
             
         });
-         * 
-         */
 
 
-        //frame.add(checkoutButton);
+        returnBook.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO Auto-generated method stub
+                throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
+            }
+            
+        });
+
+
+        //Need to deal with the addBook logic. (Almosy done)
+        addBook.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addNewBook();
+                                
+                            }
+                
+
+            
+        });
+
+        //Works.
+        signOut.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                library.signOut();
+                frame.dispose();
+
+                new LoginGUI(library);
+                
+                
+            }
+            
+        });
+
+       
+
+
+
+
+
+
 
 
 
@@ -133,13 +230,17 @@ public class MainPageGUI extends JFrame {
 
     public void showBooks(List<Book> books)
     {
-        availableBooksArea.setText("Available books:\n\n");
+        availableBooksArea.setText("Available books:\n");
         for(Book book : books)
         {
             availableBooksArea.append(book.getTitle() + "\n");
         }
     }
 
+
+    private void addNewBook() {
+        
+    }
     
     
 }
