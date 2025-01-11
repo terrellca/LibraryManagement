@@ -26,8 +26,8 @@ public class MainPageGUI extends JFrame {
     private JPanel mainpanel, buttonPanel, addBookPanel, availableBooks, headerPanel, checkoutBookPanel;
     private JScrollPane booksScrollPane;
     private JTextArea availableBooksArea;
-    private JTextField authorField, titleField, isbnField, genreField, descField;
-    private JButton checkOut, returnBook, addBook, signOut, createBookButton;
+    private JTextField authorField, titleField, isbnField, genreField, descField, checkOutTitle,checkOutAuthor;
+    private JButton checkOut, returnBook, addBook, signOut, createBookButton,rentBookButton;
         
         public MainPageGUI(Library library, User currentUser) {
             this.library = library;
@@ -46,7 +46,10 @@ public class MainPageGUI extends JFrame {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     
             mainpanel = new JPanel();
-            mainpanel.setLayout(new BorderLayout());
+
+            CardLayout c1 = new CardLayout();
+            mainpanel.setLayout(c1);
+            //mainpanel.setLayout(new CardLayout());
 
             //Goes at the top.
             headerPanel = new JPanel();
@@ -59,57 +62,71 @@ public class MainPageGUI extends JFrame {
     
             //Add Book Panel - move for better formatting later. (1/10/25)
             addBookPanel = new JPanel();
-            addBookPanel.setLayout(new GridLayout(7,1));
+            addBookPanel.setLayout(new FlowLayout());
             
             addBookPanel.add(new JLabel("Title"));
             titleField = new JTextField();
-            titleField.setPreferredSize(new Dimension(30, 30));
+            titleField.setPreferredSize(new Dimension(70, 25));
             addBookPanel.add(titleField);
 
             addBookPanel.add(new JLabel("Author"));
             authorField = new JTextField();
+            authorField.setPreferredSize(new Dimension(60, 25));
             addBookPanel.add(authorField);
 
             addBookPanel.add(new JLabel("Isbn"));
             isbnField = new JTextField();
+            isbnField.setPreferredSize(new Dimension(70, 25));
             addBookPanel.add(isbnField);
 
             addBookPanel.add(new JLabel("Description"));
             descField = new JTextField();
+            descField.setPreferredSize(new Dimension(70, 25));
             addBookPanel.add(descField);
 
 
             addBookPanel.add(new JLabel("Genre"));
             genreField = new JTextField();
+            genreField.setPreferredSize(new Dimension(70, 25));
             addBookPanel.add(genreField);
 
             createBookButton = new JButton("Add Book");
-            addBookPanel.add(createBookButton, BorderLayout.SOUTH);
+            createBookButton.setFocusable(false);
+            addBookPanel.add(createBookButton);
             addBookPanel.setVisible(false);
 
 
 
-            mainpanel.add(addBookPanel, BorderLayout.CENTER);
+            mainpanel.add(addBookPanel, "AddBookPanel");
+
+            
+            //CheckoutBook material
+            checkoutBookPanel = new JPanel();
+            checkoutBookPanel.setLayout(new FlowLayout());
+
+            checkoutBookPanel.add(new JLabel("Title"));
+            checkOutTitle = new JTextField();
+            checkOutTitle.setPreferredSize(new Dimension(200, 30));
+            checkoutBookPanel.add(checkOutTitle);
+
+            checkoutBookPanel.add(new JLabel("Author"));
+            checkOutAuthor = new JTextField();
+            checkOutAuthor.setPreferredSize(new Dimension(200, 30));
+            checkoutBookPanel.add(checkOutAuthor);
+
+            rentBookButton = new JButton("Rent Book");
+            rentBookButton.setFocusable(false);
+            checkoutBookPanel.add(rentBookButton);
+            
+
+
+            mainpanel.add(checkoutBookPanel, "Checkout Book");
 
 
 
             frame.add(mainpanel);
 
-            //Checkoutbook logic/handling/move for better formatting later.
-            checkoutBookPanel = new JPanel();
-            checkoutBookPanel.setLayout(new GridLayout(2,1));
 
-            
-            checkoutBookPanel.add(new JLabel("Title"));
-            checkoutBookPanel.add(titleField);
-
-            checkoutBookPanel.add(new JLabel("Author"));
-            checkoutBookPanel.add(authorField);
-
-            checkoutBookPanel.setVisible(false);
-
-            mainpanel.add(checkoutBookPanel, BorderLayout.CENTER);
-      
             
 
         //Holds Checkout button/Return Button/Signout/ and Add Book
@@ -173,12 +190,12 @@ public class MainPageGUI extends JFrame {
 
 
         //Dealing with button actions
-            checkOut.addActionListener(new ActionListener() {
+            rentBookButton.addActionListener(new ActionListener() {
 
             @Override
         public void actionPerformed(ActionEvent e) {
-                // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
+                
+          
         }
             
         });
@@ -189,36 +206,32 @@ public class MainPageGUI extends JFrame {
             @Override
         public void actionPerformed(ActionEvent e) {
             // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
+            throw new UnsupportedOperationException("hello im not implemented - returnbook'");
         }
             
         });
 
 
-        //Works
+        //THe main AddButton button. If the user is an admin it wont disable itself. Then when you click it, it will show the addbook panel.
         addBook.addActionListener(new ActionListener() {
-        private boolean isOpen = false;
-            @Override
+        //private boolean isOpen = false;
+        @Override
         public void actionPerformed(ActionEvent e) {
 
                 
             if(library.getSignedinUser() != null && library.getSignedinUser().isAdmin())
             {
-                if(isOpen != true) //If it is closed open it
-                {
-                    addBookPanel.setVisible(true);
+               
+                    CardLayout cl = (CardLayout) mainpanel.getLayout();
+                    c1.show(mainpanel, "AddBookPanel");
                     addNewBook();
-                    isOpen = true;
-                }
-                else{
-                    addBookPanel.setVisible(false);
-                    isOpen = false;
-                }
+
 
                 }
                 else
                 {
                     addBook.setEnabled(false);
+                    JOptionPane.showMessageDialog(frame,"Only admins can add books");
                 }
                 
 
@@ -241,7 +254,7 @@ public class MainPageGUI extends JFrame {
 
        
 
-
+        addNewBook();
 
 
         frame.setVisible(true);
@@ -316,9 +329,9 @@ public class MainPageGUI extends JFrame {
 
 
 
-    private void checkoutBook()
+    private void rentBook()
     {
-
+        
     }
 
     
