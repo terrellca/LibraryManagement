@@ -100,7 +100,7 @@ public class MainPageGUI extends JFrame {
             mainpanel.add(addBookPanel, "AddBookPanel");
 
             
-            //CheckoutBook material
+            //Rent Book material
             checkoutBookPanel = new JPanel();
             checkoutBookPanel.setLayout(new FlowLayout());
 
@@ -120,7 +120,7 @@ public class MainPageGUI extends JFrame {
             
 
 
-            mainpanel.add(checkoutBookPanel, "Checkout Book");
+            mainpanel.add(checkoutBookPanel, "CheckoutBookPanel");
 
 
 
@@ -190,31 +190,34 @@ public class MainPageGUI extends JFrame {
 
 
         //Dealing with button actions
-            rentBookButton.addActionListener(new ActionListener() {
+
+        //Working on currently.
+        checkOut.addActionListener(new ActionListener() {
 
             @Override
         public void actionPerformed(ActionEvent e) {
-                
+
+            c1.show(mainpanel, "CheckoutBookPanel");
           
         }
             
         });
 
-
+        // Not finished
         returnBook.addActionListener(new ActionListener() {
 
             @Override
         public void actionPerformed(ActionEvent e) {
             // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("hello im not implemented - returnbook'");
+            throw new UnsupportedOperationException("hello im not implemented - returnbook");
         }
             
         });
 
 
         //THe main AddButton button. If the user is an admin it wont disable itself. Then when you click it, it will show the addbook panel.
+        //Works - Done
         addBook.addActionListener(new ActionListener() {
-        //private boolean isOpen = false;
         @Override
         public void actionPerformed(ActionEvent e) {
 
@@ -222,9 +225,7 @@ public class MainPageGUI extends JFrame {
             if(library.getSignedinUser() != null && library.getSignedinUser().isAdmin())
             {
                
-                    CardLayout cl = (CardLayout) mainpanel.getLayout();
                     c1.show(mainpanel, "AddBookPanel");
-                    addNewBook();
 
 
                 }
@@ -239,7 +240,7 @@ public class MainPageGUI extends JFrame {
             }
         });
 
-        //Works.
+        //Works - Done
         signOut.addActionListener(new ActionListener() {
 
             @Override
@@ -329,14 +330,14 @@ public class MainPageGUI extends JFrame {
 
 
 
-    private void rentBook(String title,  String author)
-    {
-        Book bookToRent = null;
-        for(Book book : library.getBooks())
-        {
-            
-        }
-    }
+    // private void rentBook(String title,  String author)
+    // {
+    //     Book bookToRent = null;
+    //     for(Book book : library.getBooks())
+    //     {
+    //         if(Book.getTitle())
+    //     }
+    // }
 
     
     
