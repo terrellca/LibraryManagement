@@ -329,9 +329,13 @@ public class MainPageGUI extends JFrame {
 
 
 
-    private void rentBook()
+    private void rentBook(String title,  String author)
     {
-        
+        Book bookToRent = null;
+        for(Book book : library.getBooks())
+        {
+            
+        }
     }
 
     
