@@ -208,6 +208,8 @@ public class Library {
     }
 
 
+    //These two methods aren't really needed anymore. Keeping for later updates.
+
     public List<Book> searchBookTitle(String title)
     {
         List<Book> result = new ArrayList<>();
@@ -237,7 +239,7 @@ public class Library {
     }
 
 
-
+//Two methods above^
 
     public boolean signIn(String username, String password)
     {
@@ -307,11 +309,11 @@ public class Library {
     public boolean returnBook(Book book)
     {
 
-        if(signedInUser == null)
-        {
-            System.out.println("Sign in.");
-            return false;
-        }
+        // if(signedInUser == null)
+        // {
+        //     System.out.println("Sign in.");
+        //     return false;
+        // }
 
         if(book.isAvailable())
         {

@@ -7,6 +7,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 //import javax.swing.border.Border;
+import javax.swing.border.Border;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -22,7 +23,7 @@ public class MainPageGUI extends JFrame {
     private Library library;
     private JFrame frame;
     private User currentUser;
-    private JPanel mainpanel, buttonPanel, addBookPanel, availableBooks, headerPanel;
+    private JPanel mainpanel, buttonPanel, addBookPanel, availableBooks, headerPanel, checkoutBookPanel;
     private JScrollPane booksScrollPane;
     private JTextArea availableBooksArea;
     private JTextField authorField, titleField, isbnField, genreField, descField;
@@ -56,7 +57,7 @@ public class MainPageGUI extends JFrame {
             mainpanel.add(headerPanel, BorderLayout.NORTH);
 
     
-            //Add Book Panel
+            //Add Book Panel - move for better formatting later. (1/10/25)
             addBookPanel = new JPanel();
             addBookPanel.setLayout(new GridLayout(7,1));
             
@@ -92,66 +93,78 @@ public class MainPageGUI extends JFrame {
 
 
 
-        frame.add(mainpanel);
+            frame.add(mainpanel);
 
+            //Checkoutbook logic/handling/move for better formatting later.
+            checkoutBookPanel = new JPanel();
+            checkoutBookPanel.setLayout(new GridLayout(2,1));
 
+            
+            checkoutBookPanel.add(new JLabel("Title"));
+            checkoutBookPanel.add(titleField);
 
+            checkoutBookPanel.add(new JLabel("Author"));
+            checkoutBookPanel.add(authorField);
+
+            checkoutBookPanel.setVisible(false);
+
+            mainpanel.add(checkoutBookPanel, BorderLayout.CENTER);
       
-
+            
 
         //Holds Checkout button/Return Button/Signout/ and Add Book
-        buttonPanel = new JPanel();
-        buttonPanel.setBounds(250,250,250,250);
-        buttonPanel.setBackground(Color.BLACK);
-        buttonPanel.setLayout(new GridLayout(4,1));
-        frame.add(buttonPanel, BorderLayout.SOUTH);
+            buttonPanel = new JPanel();
+            buttonPanel.setBounds(250,250,250,250);
+            buttonPanel.setBackground(Color.BLACK);
+            buttonPanel.setLayout(new GridLayout(4,1));
+            frame.add(buttonPanel, BorderLayout.SOUTH);
 
 
 
-        checkOut = new JButton("Checkout Book");
-        checkOut.setBackground(Color.CYAN);
-        checkOut.setFocusable(false);
+            checkOut = new JButton("Checkout Book");
+            checkOut.setBackground(Color.CYAN);
+            checkOut.setFocusable(false);
         
-        returnBook = new JButton("Return Book");
-        returnBook.setBackground(Color.CYAN);
-        returnBook.setFocusable(false);
+            returnBook = new JButton("Return Book");
+            returnBook.setBackground(Color.CYAN);
+            returnBook.setFocusable(false);
 
-        addBook = new JButton("Add Book");
-        addBook.setBackground(Color.CYAN);
-        addBook.setFocusable(false);
-
-
-        signOut = new JButton("SignOut");
-        signOut.setBackground(Color.CYAN);
-        signOut.setFocusable(false);
+            addBook = new JButton("Add Book");
+            addBook.setBackground(Color.CYAN);
+            addBook.setFocusable(false);
 
 
+            signOut = new JButton("SignOut");
+            signOut.setBackground(Color.CYAN);
+            signOut.setFocusable(false);
 
 
-        buttonPanel.add(checkOut);
-        buttonPanel.add(returnBook);
-        buttonPanel.add(addBook);
-        buttonPanel.add(signOut);
+
+
+            buttonPanel.add(checkOut);
+            buttonPanel.add(returnBook);
+            buttonPanel.add(addBook);
+            buttonPanel.add(signOut);
         
         
 
 
 
-        //Shows up on the side.
-        availableBooks = new JPanel();
-        availableBooks.setLayout(new BorderLayout());
+            //Shows up on the side.
+            availableBooks = new JPanel();
+            availableBooks.setLayout(new BorderLayout());
 
-        availableBooksArea = new JTextArea();
-        availableBooksArea = new JTextArea();
-        availableBooksArea.setText("Available Books:\n");
-        availableBooksArea.setEditable(false);
+            availableBooksArea = new JTextArea();
+            availableBooksArea = new JTextArea();
+            availableBooksArea.setText("Available Books:\n");
+            availableBooksArea.setEditable(false);
 
 
-        booksScrollPane = new JScrollPane(availableBooksArea);
-        booksScrollPane.setVisible(true);
-        availableBooks.add(booksScrollPane, BorderLayout.CENTER);
+            booksScrollPane = new JScrollPane(availableBooksArea);
+            booksScrollPane.setVisible(true);
+            availableBooks.add(booksScrollPane, BorderLayout.CENTER);
 
-        frame.add(availableBooks, BorderLayout.EAST);
+            frame.add(availableBooks, BorderLayout.EAST);
         
 
 
@@ -160,14 +173,13 @@ public class MainPageGUI extends JFrame {
 
 
         //Dealing with button actions
-
-        checkOut.addActionListener(new ActionListener() {
+            checkOut.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
                 // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
-            }
+            throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
+        }
             
         });
 
@@ -175,50 +187,56 @@ public class MainPageGUI extends JFrame {
         returnBook.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
-            }
+        public void actionPerformed(ActionEvent e) {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
+        }
             
         });
 
 
-        //Need to deal with the addBook logic. (Almosy done)
+        //Works
         addBook.addActionListener(new ActionListener() {
-
+        private boolean isOpen = false;
             @Override
-            public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {
 
-                if(library.getSignedinUser() != null && library.getSignedinUser().isAdmin())
+                
+            if(library.getSignedinUser() != null && library.getSignedinUser().isAdmin())
+            {
+                if(isOpen != true) //If it is closed open it
                 {
                     addBookPanel.setVisible(true);
                     addNewBook();
+                    isOpen = true;
+                }
+                else{
+                    addBookPanel.setVisible(false);
+                    isOpen = false;
+                }
+
                 }
                 else
                 {
-                     addBook.setEnabled(false);
+                    addBook.setEnabled(false);
                 }
                 
 
-            }
-                
 
-            
+            }
         });
 
         //Works.
         signOut.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e) {
-                library.signOut();
-                frame.dispose();
+        public void actionPerformed(ActionEvent e) {
+            library.signOut();
+            frame.dispose();
 
-                new LoginGUI(library);
-                
-                
-            }
-            
+            new LoginGUI(library);
+    
+        } 
         });
 
        
@@ -291,20 +309,18 @@ public class MainPageGUI extends JFrame {
                     JOptionPane.showMessageDialog(frame, "Failed to add the book: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
 
-
-
-
-
-
-
-
-
-
-
             }
             
         });
     }
+
+
+
+    private void checkoutBook()
+    {
+
+    }
+
     
     
 }
