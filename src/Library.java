@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 
 
 
@@ -89,7 +91,7 @@ public class Library {
                     String genre = parts[1].trim();
                     String description = parts[1].trim();
                     String isbn = parts[1].trim();
-                    int copies = Integer.parseInt(parts[5].trim())               ;
+                    int copies = (parts.length == 6) ? Integer.parseInt(parts[5].trim()) : 1;             ;
                     
                     
                     //books.add(new Book(title, author, genre, description, isbn));
@@ -97,21 +99,42 @@ public class Library {
                     for(int i = 0; i < copies; i++)
                     {
                         book.addCopy();
+                        copies--;
                     }
                     books.add(book);
                     
                 }
             }
-            System.out.println("Books after initialization:");
-            for (Book book : books) {
-            System.out.println(book.getTitle());
-            }
+            // System.out.println("Books after initialization:");
+            // for (Book book : books) {
+            // System.out.println(book.getTitle());
+            // }
         }
         catch (IOException e)
         {
             System.out.println("An error occured. No books could be found.");
         }
     }
+
+        public void addBook(Book book)
+    {
+        if(signedInUser.isAdmin() && signedInUser != null)
+        {
+            for(Book b : books)
+            {
+                if(b.getIsbn().equals(book.getIsbn()))
+                {
+                    System.out.println("Another copy of " + b.getTitle() + " has been added");
+                    b.addCopy();
+                    return;
+                }
+            }
+        }
+        books.add(book);
+        appendBookToFile(book);
+        System.out.println("New Book added.");
+    }
+
 
 
 
@@ -188,24 +211,6 @@ public class Library {
 
 
 
-    public void addBook(Book book)
-    {
-        if(signedInUser.isAdmin() && signedInUser != null)
-        {
-            for(Book b : books)
-            {
-                if(b.getIsbn().equals(book.getIsbn()))
-                {
-                    System.out.println("Another copy of " + b.getTitle() + " has been added");
-                    b.addCopy();
-                    return;
-                }
-            }
-        }
-        books.add(book);
-        appendBookToFile(book);
-        System.out.println("New Book added.");
-    }
 
 
     //These two methods aren't really needed anymore. Keeping for later updates.
@@ -215,7 +220,7 @@ public class Library {
         List<Book> result = new ArrayList<>();
         for(Book book : books)
         {
-            if(book.getTitle().equalsIgnoreCase(title))
+            if(book.getTitle().toLowerCase().contains(title.toLowerCase()))
             {
                 result.add(book);
             }
@@ -279,6 +284,16 @@ public class Library {
     }
 
 
+     private void saveBooks() {
+        try (FileWriter writer = new FileWriter(BOOK_FILE)) {
+            for (Book b : books) {
+                writer.write(b.getTitle() + "," + b.getAuthor() + "," + b.getGenre() + "," +
+                             b.getIsbn() + "," + b.getDescription() + "," + b.getNumCopies() + "\n");
+            }
+        } catch (IOException e) {
+            System.out.println("Error saving books: " + e.getMessage());
+        }
+    }
 
 
 
@@ -292,12 +307,12 @@ public class Library {
 
         if(!book.isAvailable())
         {
-            System.out.println("Book is not available" + book.getTitle());
+           JOptionPane.showMessageDialog(null,"This book is not available: " + book.getTitle());
             return false;
         }
 
         book.BorrowCopy();
-        System.out.println("Book checked out" + book.getTitle());
+        JOptionPane.showMessageDialog(null,"You checked out: " + book.getTitle());
         return true;
 
 
@@ -322,7 +337,8 @@ public class Library {
         }
 
         book.ReturnCopy();
-        System.out.println("Book returned" + book.getTitle());
+        saveBooks();
+        JOptionPane.showMessageDialog(null, "You returned: " + book.getTitle());
         return true;
 
     }
