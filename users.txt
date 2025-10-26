@@ -1,4 +1,4 @@
-cedric1,password2,true
-tester1,tester1spassword,false
-testingaccount,testingaccountp,false
-coolkid43,coolkidspass,false
+cedric1,password2,manager
+tester1,tester1spassword,admin
+testingaccount,testingaccountp,user
+coolkid43,coolkidspass,user

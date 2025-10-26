@@ -1,168 +1,137 @@
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
-
-public class LoginGUI extends JFrame{
+public class LoginGUI extends JFrame {
     private Library library;
-    private JFrame frame;
     private JTextField usernameField;
-    private JTextField passwordField;
+    private JPasswordField passwordField;
 
-
-
-    public LoginGUI(Library library)
-    {
+    public LoginGUI(Library library) {
         this.library = library;
         initialize();
     }
 
+    private void initialize() {
+        setTitle("📚 Library Login");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(400, 300);
+        setLocationRelativeTo(null);
 
-    public void initialize()
-    {
-        frame = new JFrame("Library Login");
-        frame.setSize(300,300);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new FlowLayout());
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(new Color(245, 245, 245));
+        GridBagConstraints gridbag = new GridBagConstraints();
+        gridbag.insets = new Insets(10, 10, 10, 10);
+        gridbag.fill = GridBagConstraints.HORIZONTAL;
 
+        JLabel titleLabel = new JLabel("Library Login");
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 22));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
+        gridbag.gridx = 0;
+        gridbag.gridy = 0;
+        gridbag.gridwidth = 2;
+        panel.add(titleLabel, gridbag);
 
+        gridbag.gridwidth = 1;
+        gridbag.gridy++;
 
-
-        frame.add(new JLabel("Username"));
+        panel.add(new JLabel("Username:"), gridbag);
         usernameField = new JTextField(15);
-        frame.add(usernameField);
+        gridbag.gridx = 1;
+        panel.add(usernameField, gridbag);
 
+        gridbag.gridx = 0;
+        gridbag.gridy++;
+        panel.add(new JLabel("Password:"), gridbag);
+        passwordField = new JPasswordField(15);
+        gridbag.gridx = 1;
+        panel.add(passwordField, gridbag);
 
+        gridbag.gridx = 0;
+        gridbag.gridy++;
+        gridbag.gridwidth = 2;
+        gridbag.anchor = GridBagConstraints.CENTER;
 
-        frame.add(new JLabel("Password"));
-        passwordField = new JTextField(15);
-        frame.add(passwordField);
-
-
-        
-
-        //Login
         JButton loginButton = new JButton("Login");
-        loginButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String username = usernameField.getText();
-                String password = passwordField.getText();
-
-                if(library.signIn(username, password))
-                {
-                    frame.setVisible(false);
-                    new MainPageGUI(library, library.getSignedinUser());
-                    
-                }
-                else{
-                    JOptionPane.showMessageDialog(loginButton, "Incorrect username or password");
-                }
-
-                
-            }
-            
-        });
-
-
-
-
-
-        frame.add(loginButton);
-
         JButton createButton = new JButton("Create Account");
-        createButton.addActionListener(new ActionListener() {
+        JButton managerButton = new JButton("Manager Login");
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                createAccountTab();
+        loginButton.setBackground(new Color(100, 149, 237));
+        loginButton.setForeground(Color.black);
+        createButton.setBackground(new Color(60, 179, 113));
+        createButton.setForeground(Color.black);
+        managerButton.setBackground(new Color(220, 20, 60));
+        managerButton.setForeground(Color.black);
 
+        loginButton.setFocusPainted(false);
+        createButton.setFocusPainted(false);
+        managerButton.setFocusPainted(false);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(new Color(245, 245, 245));
+        buttonPanel.add(loginButton);
+        buttonPanel.add(createButton);
+        buttonPanel.add(managerButton);
+
+        gridbag.gridy++;
+        panel.add(buttonPanel, gridbag);
+
+        add(panel);
+
+        // Button actions
+        loginButton.addActionListener(e -> login());
+        createButton.addActionListener(e -> createAccount());
+        managerButton.addActionListener(e -> managerLogin());
+
+        setVisible(true);
+    }
+
+    private void login() {
+        String username = usernameField.getText();
+        String password = new String(passwordField.getPassword());
+        if (library.signIn(username, password)) {
+            JOptionPane.showMessageDialog(this, "Welcome " + username);
+            dispose();
+            new MainPageGUI(library, library.getSignedinUser());
+        } else {
+            JOptionPane.showMessageDialog(this, "Invalid username or password", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void createAccount() {
+        String username = JOptionPane.showInputDialog(this, "Enter a username:");
+        String password = JOptionPane.showInputDialog(this, "Enter a password:");
+        if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Fields cannot be empty");
+            return;
+        }
+        if (library.isUsernameUsed(username)) {
+            JOptionPane.showMessageDialog(this, "Username already exists");
+            return;
+        }
+        library.addUser(new User(username, password, "user"));
+        JOptionPane.showMessageDialog(this, "Account created successfully!");
+    }
+
+    private void managerLogin() {
+        String managerPass = JOptionPane.showInputDialog(this, "Enter Manager Access Code:");
+        if ("root123".equals(managerPass)) { // Replace with secure config later
+            String newAdmin = JOptionPane.showInputDialog(this, "Enter new admin username:");
+            String newPass = JOptionPane.showInputDialog(this, "Enter admin password:");
+            if (newAdmin != null && newPass != null) {
+                library.addUser(new User(newAdmin, newPass, "admin"));
+                JOptionPane.showMessageDialog(this, "Admin account created successfully!");
             }
-            
-        });
-
-        frame.add(createButton);
-
-
-
-
-
-
-        frame.setVisible(true);
-
-
+        } else {
+            JOptionPane.showMessageDialog(this, "Incorrect manager code.");
+        }
     }
 
 
-
-    private void createAccountTab()
-    {
-        JFrame createAccountFrame = new JFrame("Create Account");
-
-        createAccountFrame.setSize(300, 300);
-        createAccountFrame.setLayout(new FlowLayout());
-
-        JTextField newUsernameTextField = new JTextField(15);
-        JTextField newPasswordTextField = new JTextField(15);
-
-        createAccountFrame.add(new JLabel("New Username"));
-        createAccountFrame.add(newUsernameTextField);
-
-        createAccountFrame.add(new JLabel("New Password"));
-        createAccountFrame.add(newPasswordTextField);
-
-        JButton submitButton = new JButton("Submit");
-        submitButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                String newusername = newUsernameTextField.getText();
-                String newpassword = newPasswordTextField.getText();
-
-               if(newusername.isEmpty() || newpassword.isEmpty())
-               {
-                    JOptionPane.showMessageDialog(createAccountFrame,"Username and password cannot be empty.");
-                    return;
-               }
-               
-
-               if(library.isUsernameUsed(newusername))
-               {
-                    JOptionPane.showMessageDialog(createAccountFrame,"Username is already in use.");
-                    return;
-               }
-
-
-                User newUser = new User(newusername, newpassword, false);
-                library.addUser(newUser);
-                JOptionPane.showMessageDialog(createAccountFrame,"New account created.");
-                createAccountFrame.dispose();
-    
-                
-            }
-
-        });
-
-
-        createAccountFrame.add(submitButton);
-
-        createAccountFrame.setVisible(true);
-
-
-
-
-    }
-
-
-
-    
-
-
+    public static void main(String[] args) {
+    Library library = new Library();
+    new LoginGUI(library);
+}
 }

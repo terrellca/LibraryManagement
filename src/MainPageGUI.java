@@ -171,15 +171,35 @@ public class MainPageGUI extends JFrame {
 
         });
 
+        if (library.getSignedinUser().isManager()) {
+            JButton manageUsersButton = new JButton("Manage Users");
+            manageUsersButton.addActionListener(e -> openManageUsersWindow());
+            buttonPanel.add(manageUsersButton);
+        }
+
         // Not finished
         returnBook.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO Auto-generated method stub
-                throw new UnsupportedOperationException("hello im not implemented - returnbook");
-            }
+                String title = JOptionPane.showInputDialog(frame, "Enter the title of the book to return:");
+                if (title == null || title.trim().isEmpty()) {
+                    return;
+                }
 
+                List<Book> results = library.searchBookTitle(title);
+                if (results.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "No matching book found.", "Return Error",
+                            JOptionPane.ERROR_MESSAGE);
+                } else {
+                    Book bookToReturn = results.get(0);
+                    library.returnBook(bookToReturn);
+                    showBooks(library.getBooks());
+                    JOptionPane.showMessageDialog(frame, "Book returned successfully.", "Return Book",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+
+            }
         });
 
         // THe main AddButton button. If the user is an admin it wont disable itself.
@@ -189,7 +209,8 @@ public class MainPageGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                if (library.getSignedinUser() != null && library.getSignedinUser().isAdmin()) {
+                User user = library.getSignedinUser();
+                if (user != null && (user.isAdmin() || user.isManager())) {
 
                     c1.show(mainpanel, "AddBookPanel");
 
@@ -289,7 +310,8 @@ public class MainPageGUI extends JFrame {
                 } else if (!author.isEmpty()) {
                     results = library.searchBookAuthor(author);
                 } else {
-                    JOptionPane.showMessageDialog(frame, "Please enter a title or author", "Input error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "Please enter a title or author", "Input error",
+                            JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -302,32 +324,27 @@ public class MainPageGUI extends JFrame {
                                 .append(results.get(i).getAuthor()).append("\n");
                     }
 
-                    String input = JOptionPane.showInputDialog(frame, "Search Results: \n" + searchResults.toString() + "\nEnter the # of the book to rent.");
+                    String input = JOptionPane.showInputDialog(frame,
+                            "Search Results: \n" + searchResults.toString() + "\nEnter the # of the book to rent.");
                     try {
                         int choice = Integer.parseInt(input) - 1;
-                        if(choice >= 0 && choice < results.size())
-                        {
+                        if (choice >= 0 && choice < results.size()) {
                             Book selectedBook = results.get(choice);
 
-
-                            if(selectedBook.isAvailable())
-                            {
+                            if (selectedBook.isAvailable()) {
                                 library.checkoutBook(selectedBook);
                                 showBooks(library.getBooks());
-                            }
-                            else{
-                                JOptionPane.showMessageDialog(frame, "That book is not available.", "Checkout error", JOptionPane.ERROR_MESSAGE);
+                            } else {
+                                JOptionPane.showMessageDialog(frame, "That book is not available.", "Checkout error",
+                                        JOptionPane.ERROR_MESSAGE);
                             }
 
                         }
 
-
-
-
                     } catch (NumberFormatException bookrent) {
-                        JOptionPane.showMessageDialog(frame, "Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(frame, "Please enter a valid number.", "Error",
+                                JOptionPane.ERROR_MESSAGE);
                     }
-
 
                 }
 
@@ -338,5 +355,68 @@ public class MainPageGUI extends JFrame {
         });
 
     }
+
+    private void openManageUsersWindow() {
+    JFrame manageFrame = new JFrame("User Management");
+    manageFrame.setSize(400, 400);
+    manageFrame.setLocationRelativeTo(frame);
+    manageFrame.setLayout(new BorderLayout());
+
+    JTextArea userList = new JTextArea();
+    userList.setEditable(false);
+    updateUserList(userList);
+
+    JButton addAdmin = new JButton("Add Admin");
+    JButton addUser = new JButton("Add Regular User");
+    JButton removeUser = new JButton("Remove User");
+
+    addAdmin.addActionListener(e -> {
+        String username = JOptionPane.showInputDialog("Enter new admin username:");
+        String password = JOptionPane.showInputDialog("Enter new admin password:");
+        if (username != null && password != null && !library.isUsernameUsed(username)) {
+            library.addUser(new User(username, password, "admin"));
+            updateUserList(userList);
+        } else {
+            JOptionPane.showMessageDialog(manageFrame, "Username already used or invalid.");
+        }
+    });
+
+    addUser.addActionListener(e -> {
+        String username = JOptionPane.showInputDialog("Enter new user username:");
+        String password = JOptionPane.showInputDialog("Enter new user password:");
+        if (username != null && password != null && !library.isUsernameUsed(username)) {
+            library.addUser(new User(username, password, "user"));
+            updateUserList(userList);
+        } else {
+            JOptionPane.showMessageDialog(manageFrame, "Username already used or invalid.");
+        }
+    });
+
+    removeUser.addActionListener(e -> {
+        String username = JOptionPane.showInputDialog("Enter username to remove:");
+        if (username != null) {
+            boolean removed = library.removeUser(username);
+            if (removed) updateUserList(userList);
+            else JOptionPane.showMessageDialog(manageFrame, "User not found.");
+        }
+    });
+
+    JPanel controlPanel = new JPanel();
+    controlPanel.add(addAdmin);
+    controlPanel.add(addUser);
+    controlPanel.add(removeUser);
+
+    manageFrame.add(new JScrollPane(userList), BorderLayout.CENTER);
+    manageFrame.add(controlPanel, BorderLayout.SOUTH);
+    manageFrame.setVisible(true);
+}
+
+private void updateUserList(JTextArea textArea) {
+    StringBuilder sb = new StringBuilder("Current Users:\n");
+    for (User u : library.getUsers()) {
+        sb.append(u).append("\n");
+    }
+    textArea.setText(sb.toString());
+}
 
 }
